@@ -66,6 +66,19 @@ html, body {
   color: var(--text-muted);
 }
 
+/* 合规声明：全局固定展示在头部，橙红配色确保始终醒目 */
+.compliance-banner {
+  margin: 8px 0 0;
+  padding: 7px 9px;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: #FFB300;
+  background: rgba(255, 140, 0, 0.12);
+  border: 1px solid rgba(255, 140, 0, 0.45);
+  border-radius: 8px;
+}
+
 .tab-content {
   flex: 1 1 auto;
   overflow-y: auto;
@@ -75,6 +88,19 @@ html, body {
 
 .tab-pane { display: none; }
 .tab-pane.active { display: block; }
+
+/* 分区色块：计算器用淡蓝色调、复盘记事用浅灰色调，靠背景把三个板块视觉区分开
+   用负外边距把色块撑满内容区宽度，再用内边距补回间距 */
+.tab-pane.section-tint-blue {
+  background: rgba(59, 130, 246, 0.07);
+  margin: -16px -16px 0;
+  padding: 16px 16px calc(24px + env(safe-area-inset-bottom));
+}
+.tab-pane.section-tint-gray {
+  background: rgba(148, 163, 184, 0.06);
+  margin: -16px -16px 0;
+  padding: 16px 16px calc(24px + env(safe-area-inset-bottom));
+}
 
 /* 底部固定标签栏 */
 .tab-bar {
@@ -116,11 +142,41 @@ html, body {
   line-height: 1.6;
   margin: 12px 0;
 }
-.risk-alert-top { margin-top: 0; }
 .risk-alert-strong {
   font-weight: 700;
   background: rgba(246, 70, 93, 0.18);
 }
+
+/* 顶部提示：加深橙黄底色，与下方红色"强警示"区分出两级风险层次 */
+.risk-alert-top {
+  margin-top: 0;
+  background: rgba(240, 185, 11, 0.18);
+  border-color: var(--accent);
+  color: #FFD666;
+}
+
+/* 风险提示内部：核心短句常驻显示 + 次要说明折叠收纳 */
+.risk-core {
+  margin: 0;
+  font-weight: 700;
+}
+.risk-alert .risk-detail {
+  margin: 8px 0 0;
+  font-weight: 400;
+  opacity: 0.92;
+}
+.risk-toggle {
+  margin-top: 6px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.risk-toggle:active { opacity: 0.6; }
 
 /* ==========================================================================
    教程页：步骤卡片 + K线造型的步骤标记（呼应"合约K线"这个主题）
@@ -279,8 +335,13 @@ input::placeholder, textarea::placeholder { color: #566072; }
   font-weight: 700;
   cursor: pointer;
   margin-top: 4px;
+  transition: background .12s ease, transform .08s ease, opacity .12s ease;
 }
-.btn-primary:active { opacity: 0.85; }
+.btn-primary:active {
+  background: #C99A09;
+  transform: scale(0.98);
+  opacity: 0.9;
+}
 
 /* 做多/做空 分段选择器 */
 .segmented {
@@ -298,9 +359,20 @@ input::placeholder, textarea::placeholder { color: #566072; }
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
+  transition: background .15s ease, color .15s ease, transform .08s ease;
 }
-.segment-btn.segment-long.active { background: rgba(14,203,129,0.18); color: var(--long); }
-.segment-btn.segment-short.active { background: rgba(246,70,93,0.18); color: var(--short); }
+/* 选中态：加深底色 + 内嵌描边，一眼看出当前方向 */
+.segment-btn.segment-long.active {
+  background: rgba(14,203,129,0.32);
+  color: #E9FFF5;
+  box-shadow: inset 0 0 0 1px var(--long);
+}
+.segment-btn.segment-short.active {
+  background: rgba(246,70,93,0.32);
+  color: #FFEFF1;
+  box-shadow: inset 0 0 0 1px var(--short);
+}
+.segment-btn:active { transform: scale(0.97); }
 
 /* ==========================================================================
    计算器：结果面板
@@ -409,6 +481,11 @@ input::placeholder, textarea::placeholder { color: #566072; }
   font-size: 12px;
   padding: 6px 10px;
   cursor: pointer;
+  transition: background .12s ease, transform .08s ease;
+}
+.btn-delete:active {
+  background: rgba(246,70,93,0.18);
+  transform: scale(0.96);
 }
 .journal-empty {
   text-align: center;
@@ -417,8 +494,58 @@ input::placeholder, textarea::placeholder { color: #566072; }
   padding: 24px 0;
 }
 
-/* 小屏适配微调 */
+/* ==========================================================================
+   轻提示 Toast：保存复盘成功后展示，2秒自动消失
+   用 position:absolute 相对 .app 容器定位，桌面宽屏下也能居中在手机容器内
+   ========================================================================== */
+.toast {
+  position: absolute;
+  left: 50%;
+  bottom: calc(76px + env(safe-area-inset-bottom));
+  transform: translateX(-50%) translateY(8px);
+  max-width: 80%;
+  text-align: center;
+  background: rgba(20, 25, 32, 0.96);
+  border: 1px solid var(--long);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+  z-index: 50;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ==========================================================================
+   小屏适配：收紧间距，避免数字/长文本横向溢出
+   ========================================================================== */
 @media (max-width: 360px) {
   .app-header h1 { font-size: 16px; }
   .step-body h2 { font-size: 14px; }
+}
+
+@media (max-width: 480px) {
+  .tab-content { padding: 12px 12px calc(20px + env(safe-area-inset-bottom)); }
+  .tab-pane.section-tint-blue,
+  .tab-pane.section-tint-gray { margin: -12px -12px 0; padding: 12px 12px calc(20px + env(safe-area-inset-bottom)); }
+  .step { padding: 11px 0; gap: 9px; }
+  .case-study, .result-panel { padding: 11px; }
+
+  /* 数值行允许换行，避免长数字/长标签把容器撑破产生横向滚动 */
+  .case-row, .result-row {
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+  .case-row span:last-child,
+  .result-value {
+    word-break: break-word;
+    text-align: right;
+  }
+  .result-value { font-size: 14px; }
 }

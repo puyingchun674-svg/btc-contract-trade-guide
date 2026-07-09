@@ -5,7 +5,7 @@
 <!-- 移动端优先：禁止用户缩放，保证操作区域固定，避免误触 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>BTC永续合约实操手册</title>
-<link rel="stylesheet" href=style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -15,6 +15,8 @@
   <header class="app-header">
     <h1>BTC永续合约实操手册</h1>
     <p class="app-subtitle">教程 · 风控计算 · 复盘记事</p>
+    <!-- 合规声明：全局固定展示，不随标签页切换消失 -->
+    <p class="compliance-banner">⚠ 虚拟货币杠杆交易不受国内法律保护，本站工具仅服务个人演算复盘学习，不构成任何交易建议、投资指引。</p>
   </header>
 
   <!-- ========== 主内容区（三个标签页，同一时间只显示一个） ========== -->
@@ -24,7 +26,9 @@
     <section id="tab-tutorial" class="tab-pane active">
 
       <div class="risk-alert risk-alert-top">
-        ⚠ 合约有爆仓风险，杠杆越高风险越大。以下内容仅为操作流程与风控方法说明，不构成投资建议，请自行承担交易风险。
+        <p class="risk-core">⚠ 合约有爆仓风险，杠杆越高风险越大。</p>
+        <button type="button" class="risk-toggle">展开详情</button>
+        <p class="risk-detail" hidden>以下内容仅为操作流程与风控方法说明，不构成投资建议，请自行承担交易风险。</p>
       </div>
 
       <!-- 步骤 01 -->
@@ -154,7 +158,9 @@
         <p>反过来看，同样这笔空单如果行情持续向有利方向运行，例如价格从 78,214.6 跌到 59,516.8（跌幅约 23.9%），由于是 20 倍杠杆，收益率会被放大到本金的约 <b>+478%</b>——这也正是为什么"扛单"诱惑很大：赚的时候放大很多倍，但一旦方向错了，亏损同样被放大，而且亏光的距离比想象中近得多。</p>
 
         <div class="risk-alert risk-alert-strong">
-          ⚠ 20倍杠杆下，价格只需反向波动约 5%，本金即可能直接归零（简化计算，未计入手续费/资金费率，实际以交易所强平规则为准）。这就是为什么必须严格止损，而不是"觉得还会回来"就无限扛单。
+          <p class="risk-core">⚠ 20倍杠杆下，价格只需反向波动约 5%，本金即可能直接归零。</p>
+          <button type="button" class="risk-toggle">展开详情</button>
+          <p class="risk-detail" hidden>简化计算，未计入手续费/资金费率，实际以交易所强平规则为准。这就是为什么必须严格止损，而不是"觉得还会回来"就无限扛单。</p>
         </div>
 
         <p class="case-hint">想验证具体数字？切换到"计算器"标签页，把开仓价、现价、杠杆填入即可自动算出爆仓价与收益率。</p>
@@ -163,13 +169,15 @@
     </section>
 
     <!-- ---------- 标签页 2：仓位风控计算器 ---------- -->
-    <section id="tab-calculator" class="tab-pane">
+    <section id="tab-calculator" class="tab-pane section-tint-blue">
 
       <div class="risk-alert risk-alert-top">
-        ⚠ 20倍杠杆下反向波动约 5%，本金即可能直接归零。以下计算为简化模型（未计入手续费、资金费率与交易所维持保证金率），仅供参考，实际以交易所结算为准。
+        <p class="risk-core">⚠ 20倍杠杆下反向波动约 5%，本金即可能直接归零。</p>
+        <button type="button" class="risk-toggle">展开详情</button>
+        <p class="risk-detail" hidden>以下计算为简化模型（未计入手续费、资金费率与交易所维持保证金率），仅供参考，实际以交易所结算为准。</p>
       </div>
 
-      <form id="calcForm" class="calc-form">
+      <form id="calcForm" class="calc-form" novalidate>
 
         <label class="field">
           <span class="field-label">本金 (USDT)</span>
@@ -248,11 +256,11 @@
     </section>
 
     <!-- ---------- 标签页 3：交易复盘记事本 ---------- -->
-    <section id="tab-journal" class="tab-pane">
+    <section id="tab-journal" class="tab-pane section-tint-gray">
 
       <p class="journal-hint">记录内容保存在<b>本浏览器本地</b>，关闭网页不会丢失；但换设备/换浏览器/清除浏览器数据会看不到之前的记录，重要内容建议自行备份。</p>
 
-      <form id="journalForm" class="journal-form">
+      <form id="journalForm" class="journal-form" novalidate>
 
         <label class="field">
           <span class="field-label">交易方向 / 品种（选填）</span>
@@ -300,6 +308,9 @@
       <span>复盘记事</span>
     </button>
   </nav>
+
+  <!-- 保存成功等操作反馈的轻提示，2秒后自动消失 -->
+  <div class="toast" id="toast" hidden></div>
 
 </div>
 

@@ -34,6 +34,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   /* ========================================================================
+     1.5 风险提示"展开详情"折叠交互
+     全站所有 .risk-toggle 按钮共用同一套事件委托逻辑
+     ======================================================================== */
+  document.body.addEventListener("click", function (e) {
+    var toggleBtn = e.target.closest(".risk-toggle");
+    if (!toggleBtn) return;
+
+    var alertBox = toggleBtn.closest(".risk-alert");
+    var detail = alertBox ? alertBox.querySelector(".risk-detail") : null;
+    if (!detail) return;
+
+    var isHidden = detail.hasAttribute("hidden");
+    if (isHidden) {
+      detail.removeAttribute("hidden");
+      toggleBtn.textContent = "收起详情";
+    } else {
+      detail.setAttribute("hidden", "");
+      toggleBtn.textContent = "展开详情";
+    }
+  });
+
+
+  /* ========================================================================
      2. 仓位风控计算器
      ======================================================================== */
 
@@ -51,6 +74,34 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  // 校验单个数值输入：只允许非负数字（可带小数），拒绝汉字/字母/空白/负号
+  // 返回 { valid, value, message }，message 为非法时的具体提示文案
+  var NUMBER_ONLY_PATTERN = /^\d+(\.\d+)?$/;
+
+  function validateNumberInput(rawValue, label, options) {
+    options = options || {};
+    var minValue = options.minValue !== undefined ? options.minValue : 0;
+    var allowEmpty = !!options.allowEmpty;
+
+    var trimmed = (rawValue || "").trim();
+
+    if (trimmed === "") {
+      if (allowEmpty) return { valid: true, value: null };
+      return { valid: false, message: label + "不能为空，请输入数字。" };
+    }
+
+    if (!NUMBER_ONLY_PATTERN.test(trimmed)) {
+      return { valid: false, message: label + "只能输入数字，不能包含汉字、字母、空格或负号。" };
+    }
+
+    var num = parseFloat(trimmed);
+    if (!isFinite(num) || num < minValue) {
+      return { valid: false, message: label + "必须是不小于 " + minValue + " 的数字。" };
+    }
+
+    return { valid: true, value: num };
+  }
+
   // 数字格式化：千分位 + 固定小数位，方便阅读
   function fmt(num, digits) {
     if (digits === undefined) digits = 2;
@@ -64,18 +115,24 @@ document.addEventListener("DOMContentLoaded", function () {
   calcForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    // 读取输入
-    var principal = parseFloat(document.getElementById("inputPrincipal").value);
-    var leverage = parseFloat(document.getElementById("inputLeverage").value);
-    var entry = parseFloat(document.getElementById("inputEntry").value);
-    var currentRaw = document.getElementById("inputCurrent").value;
-    var current = currentRaw === "" ? null : parseFloat(currentRaw);
+    // 逐项校验：禁止汉字、空白、负数，非法输入时给出具体提示并中止计算
+    var principalCheck = validateNumberInput(document.getElementById("inputPrincipal").value, "本金", { minValue: 0.00000001 });
+    if (!principalCheck.valid) { alert(principalCheck.message); return; }
 
-    // 基本校验
-    if (!(principal > 0) || !(leverage >= 1) || !(entry > 0)) {
-      alert("请填写有效的本金 / 杠杆倍数（≥1）/ 开仓价，均需大于 0。");
-      return;
-    }
+    var leverageCheck = validateNumberInput(document.getElementById("inputLeverage").value, "杠杆倍数", { minValue: 1 });
+    if (!leverageCheck.valid) { alert(leverageCheck.message); return; }
+
+    var entryCheck = validateNumberInput(document.getElementById("inputEntry").value, "开仓价", { minValue: 0.00000001 });
+    if (!entryCheck.valid) { alert(entryCheck.message); return; }
+
+    var currentCheck = validateNumberInput(document.getElementById("inputCurrent").value, "现价", { minValue: 0.00000001, allowEmpty: true });
+    if (!currentCheck.valid) { alert(currentCheck.message); return; }
+
+    // 校验通过后取值，变量名与计算逻辑保持不变
+    var principal = principalCheck.value;
+    var leverage = leverageCheck.value;
+    var entry = entryCheck.value;
+    var current = currentCheck.value; // 允许为 null（未填现价）
 
     var isLong = currentDirection === "long";
 
@@ -158,6 +215,23 @@ document.addEventListener("DOMContentLoaded", function () {
   var JOURNAL_KEY = "btc_journal_entries_v1";
   var journalForm = document.getElementById("journalForm");
   var journalListEl = document.getElementById("journalList");
+  var toastEl = document.getElementById("toast");
+  var toastTimer = null;
+
+  // 显示轻提示，2秒后自动消失；重复触发时先清掉上一次的计时器
+  function showToast(message) {
+    if (!toastEl) return;
+    toastEl.textContent = message;
+    toastEl.hidden = false;
+    // 用 requestAnimationFrame 确保 hidden 移除后再加 show，触发过渡动画
+    requestAnimationFrame(function () { toastEl.classList.add("show"); });
+
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toastEl.classList.remove("show");
+      setTimeout(function () { toastEl.hidden = true; }, 250); // 等淡出动画结束再隐藏
+    }, 2000);
+  }
 
   // 读取本地已保存的记录，返回数组
   function loadEntries() {
@@ -249,6 +323,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     journalForm.reset();
     renderEntries();
+    showToast("已保存复盘记录 ✅");
   });
 
   // 删除一条记录（事件委托，避免每次渲染都重新绑定）
