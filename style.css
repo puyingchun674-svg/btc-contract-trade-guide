@@ -1,21 +1,62 @@
 /* ==========================================================================
-   设计令牌（Design Tokens）
-   参考加密交易所行情面板的配色习惯：深色背景 + 绿涨红跌 + 金色强调色
+   设计令牌（Design Tokens）—— 沉稳深色工具风版本
+   本轮只调整数值（配色/圆角/阴影/字号），不新增或删除任何选择器，
+   保证 index.html / script.js 引用的类名与 CSS 变量名完全不变。
    ========================================================================== */
 :root {
-  --bg: #0B0E13;              /* 页面背景 */
-  --panel: #141920;           /* 卡片/面板背景 */
-  --panel-2: #1B212B;         /* 输入框等更浅一层背景 */
-  --border: #232B36;          /* 边框线 */
-  --text: #E7EBF0;            /* 主文字 */
-  --text-muted: #8A95A6;      /* 次要文字 */
-  --long: #0ECB81;            /* 做多/上涨绿 */
-  --short: #F6465D;           /* 做空/下跌红 */
-  --accent: #F0B90B;          /* 强调金色（标签选中态等） */
-  --danger-bg: rgba(246, 70, 93, 0.12);
-  --danger-border: #F6465D;
-  --danger-text: #FF6B81;
+  /* ---- 背景层级：由深到浅，做出卡片悬浮分层，替代纯黑的生硬感 ---- */
+  --bg: #121418;               /* 页面背景：柔和深灰，替代刺眼纯黑 */
+  --panel: #1A1E24;            /* 卡片/面板背景：比页面背景略浅一级 */
+  --panel-2: #242830;          /* 输入框、标签栏等容器背景：中度暗灰 */
+  --panel-3: #1D2127;          /* 分段选择器未选中态背景：比 panel-2 更暗，做层级区分 */
+
+  /* ---- 描边：柔和浅灰，不用死板纯黑边框 ---- */
+  --border: #333944;
+  --border-soft: #3B4149;
+
+  /* ---- 文字 ---- */
+  --text: #E5E8EC;
+  --text-muted: #8B93A0;
+
+  /* ---- 语义色：做多深青绿 / 做空柔和红，降低饱和度，不刺眼 ---- */
+  --long: #2F8F72;             /* 做多/上涨：低调沉稳深青绿 */
+  --long-soft-bg: rgba(47, 143, 114, 0.30);
+  --short: #D6555F;            /* 做空/下跌：降低饱和度的红 */
+  --short-soft-bg: rgba(214, 85, 95, 0.28);
+
+  /* ---- 强调色：哑光暗金，用于主按钮 / 底部导航选中态 ---- */
+  --accent: #C99A45;
+  --accent-hover: #B98935;
+  --accent-press: #A67929;
+  --accent-ink: #241B08;       /* 金色按钮上的文字色，暗棕替代纯黑，更柔和 */
+
+  /* ---- 顶部风险提示：哑光暖橙，低饱和度，不用荧光橙黄 ---- */
+  --warn-bg: rgba(158, 100, 32, 0.16);
+  --warn-border: #7A4E20;
+  --warn-text: #DDA75C;
+
+  /* ---- 强警示（爆仓等强红提示）：同步降饱和度，但保持足够辨识度 ---- */
+  --danger-bg: rgba(198, 73, 86, 0.14);
+  --danger-border: #7C3540;
+  --danger-text: #E8828D;
+
+  /* ---- 圆角规范：卡片 12 / 按钮 10 / 输入框 8 / 底部导航 14 ---- */
   --radius: 12px;
+  --radius-btn: 10px;
+  --radius-input: 8px;
+  --radius-nav: 14px;
+
+  /* ---- 阴影规范：统一偏低强度的暗色外阴影，做轻薄悬浮层次 ---- */
+  --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.32);
+  --shadow-btn: 0 1px 4px rgba(0, 0, 0, 0.3);
+  --shadow-nav: 0 -2px 14px rgba(0, 0, 0, 0.35);
+
+  /* ---- 字号层级：主标题 > 板块小标题 > 正文 > 辅助小字 ---- */
+  --fs-title: 17px;
+  --fs-section: 15px;
+  --fs-body: 13.5px;
+  --fs-caption: 12px;
+  --fs-micro: 11px;
 
   /* 字体：数字用等宽字体，方便对齐；正文用系统默认字体，兼容中英文 */
   --font-ui: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
@@ -35,7 +76,7 @@ html, body {
 }
 
 /* ==========================================================================
-   整体布局：三段式（顶部标题 + 中间可滚动内容 + 底部固定标签栏）
+   整体布局：三段式（顶部标题 + 中间可滚动内容 + 底部固定标签栏）—— 结构不变
    移动端优先，使用 100dvh 兼容浏览器地址栏高度变化
    ========================================================================== */
 .app {
@@ -56,27 +97,27 @@ html, body {
 }
 .app-header h1 {
   margin: 0;
-  font-size: 17px;
+  font-size: var(--fs-title);
   font-weight: 700;
   letter-spacing: 0.2px;
 }
 .app-subtitle {
   margin: 4px 0 0;
-  font-size: 12px;
+  font-size: var(--fs-caption);
   color: var(--text-muted);
 }
 
-/* 合规声明：全局固定展示在头部，橙红配色确保始终醒目 */
+/* 合规声明：全局固定展示在头部，哑光暖橙配色，稳重不刺眼但依然醒目 */
 .compliance-banner {
   margin: 8px 0 0;
   padding: 7px 9px;
-  font-size: 11.5px;
-  font-weight: 700;
-  line-height: 1.5;
-  color: #FFB300;
-  background: rgba(255, 140, 0, 0.12);
-  border: 1px solid rgba(255, 140, 0, 0.45);
-  border-radius: 8px;
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--warn-text);
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  border-radius: var(--radius-input);
 }
 
 .tab-content {
@@ -92,45 +133,51 @@ html, body {
 /* 分区色块：计算器用淡蓝色调、复盘记事用浅灰色调，靠背景把三个板块视觉区分开
    用负外边距把色块撑满内容区宽度，再用内边距补回间距 */
 .tab-pane.section-tint-blue {
-  background: rgba(59, 130, 246, 0.07);
+  background: rgba(59, 130, 246, 0.06);
   margin: -16px -16px 0;
   padding: 16px 16px calc(24px + env(safe-area-inset-bottom));
 }
 .tab-pane.section-tint-gray {
-  background: rgba(148, 163, 184, 0.06);
+  background: rgba(148, 163, 184, 0.05);
   margin: -16px -16px 0;
   padding: 16px 16px calc(24px + env(safe-area-inset-bottom));
 }
 
-/* 底部固定标签栏 */
+/* 底部固定标签栏：中度暗灰底色 + 顶部圆角 + 轻微上投阴影，做出悬浮层次 */
 .tab-bar {
   flex: 0 0 auto;
   display: flex;
   border-top: 1px solid var(--border);
-  background: var(--panel);
+  background: var(--panel-2);
   padding-bottom: env(safe-area-inset-bottom);
+  border-radius: var(--radius-nav) var(--radius-nav) 0 0;
+  box-shadow: var(--shadow-nav);
+  position: relative;
+  z-index: 10;
 }
 .tab-btn {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 8px 4px 10px;
+  gap: 3px;
+  padding: 9px 4px 10px;
   background: transparent;
   border: none;
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: var(--fs-micro);
   font-family: var(--font-ui);
   cursor: pointer;
+  transition: color .15s ease, opacity .1s ease;
 }
 .tab-btn .tab-icon { font-size: 18px; line-height: 1; }
 .tab-btn.active {
   color: var(--accent);
 }
+.tab-btn:active { opacity: 0.6; }
 
 /* ==========================================================================
-   风控提示（红色醒目样式）——全站统一使用，重要文案都用这一套
+   风控提示 —— 全站统一使用，重要文案都用这一套；本轮只调配色/字重
    ========================================================================== */
 .risk-alert {
   background: var(--danger-bg);
@@ -138,31 +185,34 @@ html, body {
   color: var(--danger-text);
   border-radius: var(--radius);
   padding: 10px 12px;
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: var(--fs-body);
+  line-height: 1.65;
   margin: 12px 0;
+  box-shadow: var(--shadow-card);
 }
 .risk-alert-strong {
-  font-weight: 700;
-  background: rgba(246, 70, 93, 0.18);
+  font-weight: 600;
+  background: rgba(198, 73, 86, 0.20);
 }
 
-/* 顶部提示：加深橙黄底色，与下方红色"强警示"区分出两级风险层次 */
+/* 顶部提示：哑光暖橙底色 + 偏暗橙金边框，与下方红色"强警示"区分出两级风险层次 */
 .risk-alert-top {
   margin-top: 0;
-  background: rgba(240, 185, 11, 0.18);
-  border-color: var(--accent);
-  color: #FFD666;
+  background: var(--warn-bg);
+  border-color: var(--warn-border);
+  color: var(--warn-text);
 }
 
-/* 风险提示内部：核心短句常驻显示 + 次要说明折叠收纳 */
+/* 风险提示内部：核心短句常驻显示（适度加粗+适配底色，不用高饱和纯色标亮）+ 次要说明折叠收纳 */
 .risk-core {
   margin: 0;
-  font-weight: 700;
+  font-weight: 600;
 }
 .risk-alert .risk-detail {
   margin: 8px 0 0;
   font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: 0.1px;
   opacity: 0.92;
 }
 .risk-toggle {
@@ -170,8 +220,8 @@ html, body {
   background: none;
   border: none;
   padding: 0;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--fs-caption);
+  font-weight: 600;
   color: inherit;
   text-decoration: underline;
   cursor: pointer;
@@ -184,7 +234,7 @@ html, body {
 .step {
   display: flex;
   gap: 12px;
-  padding: 14px 0;
+  padding: 15px 0;
   border-bottom: 1px solid var(--border);
 }
 .step:last-of-type { border-bottom: none; }
@@ -218,28 +268,28 @@ html, body {
 .candle::before { top: -6px; height: 6px; }
 .candle::after { bottom: -6px; height: 6px; }
 
-.candle-up { background: var(--long); }     /* 绿色实体：偏"做多/上涨"相关步骤 */
-.candle-down { background: var(--short); }  /* 红色实体：偏"止损/做空案例"相关步骤 */
+.candle-up { background: var(--long); }     /* 深青绿实体：偏"做多/上涨"相关步骤 */
+.candle-down { background: var(--short); }  /* 柔和红实体：偏"止损/做空案例"相关步骤 */
 .candle-neutral { background: var(--text-muted); } /* 灰色实体：中性操作步骤 */
 
 .step-num {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-micro);
   color: var(--text-muted);
 }
 
 .step-body { flex: 1 1 auto; min-width: 0; }
 .step-body h2 {
   margin: 0 0 8px;
-  font-size: 15px;
+  font-size: var(--fs-section);
   font-weight: 700;
 }
-.step-body p { margin: 0 0 8px; font-size: 13.5px; line-height: 1.7; color: var(--text); }
+.step-body p { margin: 0 0 8px; font-size: var(--fs-body); line-height: 1.75; color: var(--text); }
 .step-body ul { margin: 0; padding-left: 18px; }
 .step-body li {
-  font-size: 13.5px;
-  line-height: 1.7;
-  margin-bottom: 6px;
+  font-size: var(--fs-body);
+  line-height: 1.75;
+  margin-bottom: 7px;
   color: var(--text);
 }
 .step-body li:last-child { margin-bottom: 0; }
@@ -252,15 +302,16 @@ html, body {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
 }
-.case-title { margin: 0 0 8px; font-size: 15px; font-weight: 700; }
-.case-study p { font-size: 13.5px; line-height: 1.7; margin: 0 0 10px; }
+.case-title { margin: 0 0 8px; font-size: var(--fs-section); font-weight: 700; }
+.case-study p { font-size: var(--fs-body); line-height: 1.75; margin: 0 0 10px; }
 .case-study b { color: var(--accent); }
-.case-hint { color: var(--text-muted); font-size: 12.5px; }
+.case-hint { color: var(--text-muted); font-size: var(--fs-caption); }
 
 .case-table {
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-input);
   overflow: hidden;
   margin-bottom: 10px;
 }
@@ -268,7 +319,7 @@ html, body {
   display: flex;
   justify-content: space-between;
   padding: 8px 10px;
-  font-size: 13px;
+  font-size: var(--fs-body);
   border-bottom: 1px solid var(--border);
   font-family: var(--font-mono);
 }
@@ -277,19 +328,19 @@ html, body {
   background: var(--panel-2);
   font-family: var(--font-ui);
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: var(--fs-caption);
 }
 .case-row-danger { color: var(--danger-text); font-weight: 700; }
 
 .tag {
   font-family: var(--font-ui);
-  font-size: 11px;
+  font-size: var(--fs-micro);
   padding: 2px 8px;
   border-radius: 999px;
   font-weight: 700;
 }
-.tag-short { background: rgba(246,70,93,0.15); color: var(--short); }
-.tag-long { background: rgba(14,203,129,0.15); color: var(--long); }
+.tag-short { background: rgba(214,85,95,0.16); color: var(--short); }
+.tag-long { background: rgba(47,143,114,0.20); color: var(--long); }
 
 /* ==========================================================================
    表单通用样式（计算器 / 复盘记事共用）
@@ -300,7 +351,7 @@ html, body {
 }
 .field-label {
   display: block;
-  font-size: 12.5px;
+  font-size: var(--fs-caption);
   color: var(--text-muted);
   margin-bottom: 6px;
 }
@@ -310,50 +361,58 @@ textarea {
   width: 100%;
   background: var(--panel-2);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-input);
   padding: 11px 12px;
   font-size: 15px;
   color: var(--text);
   font-family: var(--font-mono);
   outline: none;
+  box-shadow: var(--shadow-btn);
+  transition: border-color .15s ease, box-shadow .15s ease;
 }
 input[type="text"] { font-family: var(--font-ui); }
 textarea { font-family: var(--font-ui); resize: vertical; }
+/* 聚焦态：细腻高亮描边，用哑光金而非荧光色，外圈加一圈很淡的光晕即可 */
 input:focus, textarea:focus {
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(201, 154, 69, 0.18);
 }
-input::placeholder, textarea::placeholder { color: #566072; }
+input::placeholder, textarea::placeholder { color: #5B6472; }
 
 .btn-primary {
   width: 100%;
   padding: 13px;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-btn);
   background: var(--accent);
-  color: #1A1300;
+  color: var(--accent-ink);
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   margin-top: 4px;
-  transition: background .12s ease, transform .08s ease, opacity .12s ease;
+  box-shadow: var(--shadow-btn);
+  transition: background .12s ease, transform .08s ease, box-shadow .12s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover { background: var(--accent-hover); }
 }
 .btn-primary:active {
-  background: #C99A09;
+  background: var(--accent-press);
   transform: scale(0.98);
-  opacity: 0.9;
+  box-shadow: none;
 }
 
 /* 做多/做空 分段选择器 */
 .segmented {
   display: flex;
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-btn);
   overflow: hidden;
 }
 .segment-btn {
   flex: 1;
   padding: 11px 0;
-  background: var(--panel-2);
+  background: var(--panel-3);
   border: none;
   color: var(--text-muted);
   font-size: 14px;
@@ -361,15 +420,15 @@ input::placeholder, textarea::placeholder { color: #566072; }
   cursor: pointer;
   transition: background .15s ease, color .15s ease, transform .08s ease;
 }
-/* 选中态：加深底色 + 内嵌描边，一眼看出当前方向 */
+/* 选中态：低调沉稳的深青绿 / 柔和红块状高亮 + 内嵌描边，一眼看出当前方向 */
 .segment-btn.segment-long.active {
-  background: rgba(14,203,129,0.32);
-  color: #E9FFF5;
+  background: var(--long-soft-bg);
+  color: #DCF3EB;
   box-shadow: inset 0 0 0 1px var(--long);
 }
 .segment-btn.segment-short.active {
-  background: rgba(246,70,93,0.32);
-  color: #FFEFF1;
+  background: var(--short-soft-bg);
+  color: #FBE3E5;
   box-shadow: inset 0 0 0 1px var(--short);
 }
 .segment-btn:active { transform: scale(0.97); }
@@ -383,6 +442,7 @@ input::placeholder, textarea::placeholder { color: #566072; }
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
 }
 .result-row {
   display: flex;
@@ -392,7 +452,7 @@ input::placeholder, textarea::placeholder { color: #566072; }
   border-bottom: 1px solid var(--border);
 }
 .result-row:last-of-type { border-bottom: none; }
-.result-label { font-size: 12.5px; color: var(--text-muted); }
+.result-label { font-size: var(--fs-caption); color: var(--text-muted); }
 .result-value {
   font-family: var(--font-mono);
   font-size: 15px;
@@ -400,7 +460,7 @@ input::placeholder, textarea::placeholder { color: #566072; }
 }
 .result-row-danger .result-value { color: var(--danger-text); }
 
-/* 距爆仓价距离的可视化条：绿→红 渐变，指示当前风险位置 */
+/* 距爆仓价距离的可视化条：绿→金→红 渐变，指示当前风险位置 */
 .liq-gauge {
   margin-top: 10px;
   height: 8px;
@@ -413,7 +473,7 @@ input::placeholder, textarea::placeholder { color: #566072; }
   top: -4px;
   width: 3px;
   height: 16px;
-  background: #FFFFFF;
+  background: #F2F3F5;
   border-radius: 2px;
   left: 0%;
   box-shadow: 0 0 0 2px rgba(0,0,0,0.4);
@@ -421,7 +481,7 @@ input::placeholder, textarea::placeholder { color: #566072; }
 .liq-gauge-labels {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  font-size: var(--fs-micro);
   color: var(--text-muted);
   margin-top: 6px;
 }
@@ -430,9 +490,9 @@ input::placeholder, textarea::placeholder { color: #566072; }
    复盘记事本
    ========================================================================== */
 .journal-hint {
-  font-size: 12.5px;
+  font-size: var(--fs-caption);
   color: var(--text-muted);
-  line-height: 1.6;
+  line-height: 1.65;
   margin: 0 0 14px;
 }
 .journal-form { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
@@ -443,6 +503,7 @@ input::placeholder, textarea::placeholder { color: #566072; }
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 12px;
+  box-shadow: var(--shadow-card);
 }
 .journal-entry-head {
   display: flex;
@@ -451,24 +512,24 @@ input::placeholder, textarea::placeholder { color: #566072; }
   margin-bottom: 8px;
 }
 .journal-entry-title {
-  font-size: 13.5px;
+  font-size: var(--fs-body);
   font-weight: 700;
 }
 .journal-entry-date {
-  font-size: 11px;
+  font-size: var(--fs-micro);
   color: var(--text-muted);
   font-family: var(--font-mono);
 }
 .journal-entry-field { margin-bottom: 6px; }
 .journal-entry-field:last-child { margin-bottom: 0; }
 .journal-entry-field-label {
-  font-size: 11px;
+  font-size: var(--fs-micro);
   color: var(--text-muted);
   margin-bottom: 2px;
 }
 .journal-entry-field-text {
-  font-size: 13px;
-  line-height: 1.6;
+  font-size: var(--fs-body);
+  line-height: 1.65;
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -477,25 +538,25 @@ input::placeholder, textarea::placeholder { color: #566072; }
   background: transparent;
   border: 1px solid var(--danger-border);
   color: var(--danger-text);
-  border-radius: 8px;
-  font-size: 12px;
+  border-radius: var(--radius-input);
+  font-size: var(--fs-caption);
   padding: 6px 10px;
   cursor: pointer;
   transition: background .12s ease, transform .08s ease;
 }
 .btn-delete:active {
-  background: rgba(246,70,93,0.18);
+  background: rgba(198,73,86,0.20);
   transform: scale(0.96);
 }
 .journal-empty {
   text-align: center;
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: var(--fs-body);
   padding: 24px 0;
 }
 
 /* ==========================================================================
-   轻提示 Toast：保存复盘成功后展示，2秒自动消失
+   轻提示 Toast：保存复盘成功后展示，2秒自动消失（逻辑不变，仅调配色）
    用 position:absolute 相对 .app 容器定位，桌面宽屏下也能居中在手机容器内
    ========================================================================== */
 .toast {
@@ -505,13 +566,13 @@ input::placeholder, textarea::placeholder { color: #566072; }
   transform: translateX(-50%) translateY(8px);
   max-width: 80%;
   text-align: center;
-  background: rgba(20, 25, 32, 0.96);
+  background: var(--panel-2);
   border: 1px solid var(--long);
   color: var(--text);
   padding: 10px 16px;
   border-radius: 999px;
-  font-size: 13px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  font-size: var(--fs-body);
+  box-shadow: var(--shadow-card);
   opacity: 0;
   pointer-events: none;
   transition: opacity .25s ease, transform .25s ease;
