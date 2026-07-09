@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<!-- 移动端优先：禁止用户缩放，保证操作区域固定，避免误触 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>BTC永续合约实操手册</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ========== 顶部标题栏 ========== -->
+  <header class="app-header">
+    <h1>BTC永续合约实操手册</h1>
+    <p class="app-subtitle">教程 · 风控计算 · 复盘记事</p>
+  </header>
+
+  <!-- ========== 主内容区（三个标签页，同一时间只显示一个） ========== -->
+  <main class="tab-content" id="tabContent">
+
+    <!-- ---------- 标签页 1：买卖分步教程 ---------- -->
+    <section id="tab-tutorial" class="tab-pane active">
+
+      <div class="risk-alert risk-alert-top">
+        ⚠ 合约有爆仓风险，杠杆越高风险越大。以下内容仅为操作流程与风控方法说明，不构成投资建议，请自行承担交易风险。
+      </div>
+
+      <!-- 步骤 01 -->
+      <article class="step">
+        <div class="step-marker">
+          <span class="candle candle-neutral" aria-hidden="true"></span>
+          <span class="step-num">01</span>
+        </div>
+        <div class="step-body">
+          <h2>交易所开户注意事项</h2>
+          <ul>
+            <li>选择成交量大、合规程度高的主流交易所，避免小平台跑路风险。</li>
+            <li>必须开启双重验证（谷歌验证器/短信），并单独设置资金密码。</li>
+            <li>如使用 API 做自动化下单，<b>只开启"交易"权限，绝不开放"提现"权限</b>，防止密钥泄露造成资金被盗。</li>
+            <li>提币地址、白名单功能建议开启，减少被盗后资金外流的可能。</li>
+            <li>新账户先用小额资金测试下单、止盈止损、划转流程是否顺畅，再投入正式本金。</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- 步骤 02 -->
+      <article class="step">
+        <div class="step-marker">
+          <span class="candle candle-up" aria-hidden="true"></span>
+          <span class="step-num">02</span>
+        </div>
+        <div class="step-body">
+          <h2>行情判断：怎么找多空入场时机</h2>
+          <p>入场不是猜方向，而是等待"结构 + 量能 + 动能"三者共振：</p>
+          <ul>
+            <li><b>价格结构</b>：先看大周期（周线/日线）在哪个区间——强势区（均线上方）、震荡区、弱势区（均线下方），只在结构允许的方向找机会。</li>
+            <li><b>量能行为</b>：突破或反转是否有真实成交量配合，缩量的突破/破位大概率是假动作，容易被骗入场后立刻打回。</li>
+            <li><b>动能确认</b>：结合 RSI 等动能指标看是否有背离或极值区反转信号，作为结构信号的"辅助投票"，而不是单独作为开仓依据。</li>
+            <li>三者尽量独立验证、互相印证，而不是同一逻辑换个指标重复看一遍——重复相关的信号并不能真正降低风险。</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- 步骤 03 -->
+      <article class="step">
+        <div class="step-marker">
+          <span class="candle candle-neutral" aria-hidden="true"></span>
+          <span class="step-num">03</span>
+        </div>
+        <div class="step-body">
+          <h2>下单填写参数的规范</h2>
+          <ul>
+            <li><b>合约类型</b>：新手建议使用 U 本位合约（USDT保证金），盈亏直接以 USDT 计价，比较直观。</li>
+            <li><b>仓位模式</b>：逐仓 vs 全仓——逐仓亏损上限只到该仓位保证金，风险隔离更清晰，新手/单笔试仓优先用逐仓。</li>
+            <li><b>杠杆倍数</b>：杠杆越高，可承受的反向波动越小，务必先用本页"仓位风控计算器"算清楚爆仓价再下单。</li>
+            <li><b>委托类型</b>：限价单可以指定价格、不容易被极端插针成交；市价单成交快但可能有滑点，行情剧烈波动时要注意滑点设置。</li>
+            <li><b>数量单位</b>：部分交易所以"张"为单位、部分以"币"为单位，下单前务必确认换算比例，避免仓位算错。</li>
+            <li>下单前二次确认：方向（买入/卖出、开多/开空）、价格、数量、杠杆是否与计划一致，防止手滑做反方向。</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- 步骤 04 -->
+      <article class="step">
+        <div class="step-marker">
+          <span class="candle candle-down" aria-hidden="true"></span>
+          <span class="step-num">04</span>
+        </div>
+        <div class="step-body">
+          <h2>止盈止损点位设置方法</h2>
+          <ul>
+            <li><b>止损位</b>：设在能证伪你入场逻辑的结构位置之外（例如关键支撑/压力位、前低/前高外側一点），而不是凭感觉设一个固定百分比。</li>
+            <li>止损空间越大，为了控制单笔风险，仓位就应该越小，两者要联动计算，不能各定各的。</li>
+            <li><b>止盈位</b>：可以参考前方压力/支撑结构或前高前低分批设置，而不是设一个点位赌到底。</li>
+            <li>下单的同时就把止盈止损挂好，不要等"到时候再看"，情绪会在盘中干扰判断。</li>
+          </ul>
+          <div class="risk-alert">
+            ⚠ 止损单不是摆设：宁可先设窄一点被打掉再重新找机会，也不要为了"怕止损"而不设止损。
+          </div>
+        </div>
+      </article>
+
+      <!-- 步骤 05 -->
+      <article class="step">
+        <div class="step-marker">
+          <span class="candle candle-up" aria-hidden="true"></span>
+          <span class="step-num">05</span>
+        </div>
+        <div class="step-body">
+          <h2>浮盈单子分批减仓策略</h2>
+          <ul>
+            <li>浮盈之后不建议一把全平或死扛不动，可以分批止盈，例如到第一目标位先减仓 30%，到第二目标位再减仓 30%，剩余仓位用移动止损保护。</li>
+            <li>第一批减仓后，可以把止损上移（多单）/下移（空单）到成本价附近，把这笔交易变成"保本或小亏"，剩下仓位安心持有搏更大空间。</li>
+            <li>分批减仓的核心目的是"落袋为安"：把浮动盈利变成确定盈利，避免行情反转把利润全部还回去。</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- 步骤 06 -->
+      <article class="step">
+        <div class="step-marker">
+          <span class="candle candle-down" aria-hidden="true"></span>
+          <span class="step-num">06</span>
+        </div>
+        <div class="step-body">
+          <h2>行情走反向时的止损离场方案</h2>
+          <ul>
+            <li>一旦价格触及预设止损位，按计划离场，不要临时移动止损给行情"更多空间"，也不要用"补仓摊薄成本"的方式跟亏损的方向对抗。</li>
+            <li>高杠杆下，反向波动的"容错空间"非常小，越扛只会让亏损占本金的比例越滚越大，直到触发强平。</li>
+            <li>离场后如果行情仍符合原逻辑，可以重新按流程找入场点，而不是在原单子上纠结"要不要再等等"。</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- ---------- 案例：20倍杠杆BTC空单 ---------- -->
+      <article class="case-study">
+        <h2 class="case-title">案例拆解：20倍杠杆 BTC 空单，为什么不能无脑扛单</h2>
+        <p>假设以 20 倍杠杆开空一笔 BTC 合约，开仓价 78,214.6 USDT。开空之后，只要价格<b>反向上涨约 5%</b>，本金就可能被完全吃掉：</p>
+
+        <div class="case-table">
+          <div class="case-row case-row-head">
+            <span>项目</span><span>数值</span>
+          </div>
+          <div class="case-row"><span>开仓方向</span><span class="tag tag-short">做空</span></div>
+          <div class="case-row"><span>开仓价</span><span>78,214.6 USDT</span></div>
+          <div class="case-row"><span>杠杆倍数</span><span>20x</span></div>
+          <div class="case-row case-row-danger"><span>理论爆仓价（反向）</span><span>≈ 82,125.3 USDT</span></div>
+        </div>
+
+        <p>计算逻辑很简单：仓位保证金 = 名义仓位价值 ÷ 杠杆。在不考虑手续费与资金费率的简化模型下，只要价格反向波动幅度达到 <b>1 ÷ 杠杆</b>（20倍杠杆即约 5%），亏损就会等于全部保证金，触发强制平仓，本金归零。</p>
+
+        <p>反过来看，同样这笔空单如果行情持续向有利方向运行，例如价格从 78,214.6 跌到 59,516.8（跌幅约 23.9%），由于是 20 倍杠杆，收益率会被放大到本金的约 <b>+478%</b>——这也正是为什么"扛单"诱惑很大：赚的时候放大很多倍，但一旦方向错了，亏损同样被放大，而且亏光的距离比想象中近得多。</p>
+
+        <div class="risk-alert risk-alert-strong">
+          ⚠ 20倍杠杆下，价格只需反向波动约 5%，本金即可能直接归零（简化计算，未计入手续费/资金费率，实际以交易所强平规则为准）。这就是为什么必须严格止损，而不是"觉得还会回来"就无限扛单。
+        </div>
+
+        <p class="case-hint">想验证具体数字？切换到"计算器"标签页，把开仓价、现价、杠杆填入即可自动算出爆仓价与收益率。</p>
+      </article>
+
+    </section>
+
+    <!-- ---------- 标签页 2：仓位风控计算器 ---------- -->
+    <section id="tab-calculator" class="tab-pane">
+
+      <div class="risk-alert risk-alert-top">
+        ⚠ 20倍杠杆下反向波动约 5%，本金即可能直接归零。以下计算为简化模型（未计入手续费、资金费率与交易所维持保证金率），仅供参考，实际以交易所结算为准。
+      </div>
+
+      <form id="calcForm" class="calc-form">
+
+        <label class="field">
+          <span class="field-label">本金 (USDT)</span>
+          <input type="number" id="inputPrincipal" inputmode="decimal" placeholder="例如 1000" min="0" step="any" required>
+        </label>
+
+        <label class="field">
+          <span class="field-label">杠杆倍数</span>
+          <input type="number" id="inputLeverage" inputmode="decimal" placeholder="例如 20" min="1" step="any" required>
+        </label>
+
+        <div class="field">
+          <span class="field-label">方向</span>
+          <div class="segmented" id="directionSegment">
+            <button type="button" class="segment-btn segment-long active" data-dir="long">做多</button>
+            <button type="button" class="segment-btn segment-short" data-dir="short">做空</button>
+          </div>
+        </div>
+
+        <label class="field">
+          <span class="field-label">开仓价 (USDT)</span>
+          <input type="number" id="inputEntry" inputmode="decimal" placeholder="例如 78214.6" min="0" step="any" required>
+        </label>
+
+        <label class="field">
+          <span class="field-label">现价 (USDT，选填，用于计算浮动盈亏)</span>
+          <input type="number" id="inputCurrent" inputmode="decimal" placeholder="例如 59516.8" min="0" step="any">
+        </label>
+
+        <button type="submit" class="btn-primary">计算</button>
+      </form>
+
+      <!-- 计算结果展示区 -->
+      <div class="result-panel" id="resultPanel" hidden>
+
+        <div class="result-row">
+          <span class="result-label">名义仓位价值</span>
+          <span class="result-value" id="resPositionValue">--</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">最大可开仓位（BTC数量）</span>
+          <span class="result-value" id="resPositionSize">--</span>
+        </div>
+        <div class="result-row result-row-danger">
+          <span class="result-label">理论爆仓价</span>
+          <span class="result-value" id="resLiqPrice">--</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">距爆仓价距离</span>
+          <span class="result-value" id="resLiqDistance">--</span>
+        </div>
+
+        <!-- 距爆仓价距离的可视化进度条：越靠右越危险 -->
+        <div class="liq-gauge">
+          <div class="liq-gauge-bar" id="liqGaugeBar"></div>
+        </div>
+        <div class="liq-gauge-labels">
+          <span>开仓价</span>
+          <span>爆仓价</span>
+        </div>
+
+        <div class="result-row" id="resPnlRow" hidden>
+          <span class="result-label">浮动盈亏 (USDT)</span>
+          <span class="result-value" id="resPnlAmount">--</span>
+        </div>
+        <div class="result-row" id="resRoeRow" hidden>
+          <span class="result-label">收益率 (相对本金 ROE)</span>
+          <span class="result-value" id="resRoe">--</span>
+        </div>
+
+        <div class="risk-alert risk-alert-strong" id="resWarning">
+          ⚠ 请填写数据后计算
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ---------- 标签页 3：交易复盘记事本 ---------- -->
+    <section id="tab-journal" class="tab-pane">
+
+      <p class="journal-hint">记录内容保存在<b>本浏览器本地</b>，关闭网页不会丢失；但换设备/换浏览器/清除浏览器数据会看不到之前的记录，重要内容建议自行备份。</p>
+
+      <form id="journalForm" class="journal-form">
+
+        <label class="field">
+          <span class="field-label">交易方向 / 品种（选填）</span>
+          <input type="text" id="jSymbol" placeholder="例如：BTCUSDT 永续 · 做空 20x">
+        </label>
+
+        <label class="field">
+          <span class="field-label">入场逻辑</span>
+          <textarea id="jEntryLogic" rows="3" placeholder="为什么在这个位置开仓？结构/量能/动能依据是什么？"></textarea>
+        </label>
+
+        <label class="field">
+          <span class="field-label">盈亏结果</span>
+          <textarea id="jResult" rows="2" placeholder="最终盈亏多少？是止盈离场还是止损离场？"></textarea>
+        </label>
+
+        <label class="field">
+          <span class="field-label">经验总结</span>
+          <textarea id="jSummary" rows="3" placeholder="这笔交易做对了什么、做错了什么？下次如何改进？"></textarea>
+        </label>
+
+        <button type="submit" class="btn-primary">保存这条复盘</button>
+      </form>
+
+      <div class="journal-list" id="journalList">
+        <!-- 已保存的复盘记录由 JS 动态插入这里 -->
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ========== 底部固定标签栏（3个标签页切换） ========== -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" data-target="tab-tutorial">
+      <span class="tab-icon">📘</span>
+      <span>买卖教程</span>
+    </button>
+    <button class="tab-btn" data-target="tab-calculator">
+      <span class="tab-icon">🧮</span>
+      <span>风控计算器</span>
+    </button>
+    <button class="tab-btn" data-target="tab-journal">
+      <span class="tab-icon">📝</span>
+      <span>复盘记事</span>
+    </button>
+  </nav>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,424 @@
+/* ==========================================================================
+   设计令牌（Design Tokens）
+   参考加密交易所行情面板的配色习惯：深色背景 + 绿涨红跌 + 金色强调色
+   ========================================================================== */
+:root {
+  --bg: #0B0E13;              /* 页面背景 */
+  --panel: #141920;           /* 卡片/面板背景 */
+  --panel-2: #1B212B;         /* 输入框等更浅一层背景 */
+  --border: #232B36;          /* 边框线 */
+  --text: #E7EBF0;            /* 主文字 */
+  --text-muted: #8A95A6;      /* 次要文字 */
+  --long: #0ECB81;            /* 做多/上涨绿 */
+  --short: #F6465D;           /* 做空/下跌红 */
+  --accent: #F0B90B;          /* 强调金色（标签选中态等） */
+  --danger-bg: rgba(246, 70, 93, 0.12);
+  --danger-border: #F6465D;
+  --danger-text: #FF6B81;
+  --radius: 12px;
+
+  /* 字体：数字用等宽字体，方便对齐；正文用系统默认字体，兼容中英文 */
+  --font-ui: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
+             "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Roboto Mono", Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ==========================================================================
+   整体布局：三段式（顶部标题 + 中间可滚动内容 + 底部固定标签栏）
+   移动端优先，使用 100dvh 兼容浏览器地址栏高度变化
+   ========================================================================== */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 560px;   /* 桌面浏览器打开时限制宽度，居中显示，模拟手机容器 */
+  margin: 0 auto;
+  background: var(--bg);
+  position: relative;
+}
+
+.app-header {
+  flex: 0 0 auto;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.app-header h1 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+.app-subtitle {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.tab-content {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px 16px calc(24px + env(safe-area-inset-bottom));
+}
+
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* 底部固定标签栏 */
+.tab-bar {
+  flex: 0 0 auto;
+  display: flex;
+  border-top: 1px solid var(--border);
+  background: var(--panel);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px 10px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-ui);
+  cursor: pointer;
+}
+.tab-btn .tab-icon { font-size: 18px; line-height: 1; }
+.tab-btn.active {
+  color: var(--accent);
+}
+
+/* ==========================================================================
+   风控提示（红色醒目样式）——全站统一使用，重要文案都用这一套
+   ========================================================================== */
+.risk-alert {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: var(--danger-text);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 12px 0;
+}
+.risk-alert-top { margin-top: 0; }
+.risk-alert-strong {
+  font-weight: 700;
+  background: rgba(246, 70, 93, 0.18);
+}
+
+/* ==========================================================================
+   教程页：步骤卡片 + K线造型的步骤标记（呼应"合约K线"这个主题）
+   ========================================================================== */
+.step {
+  display: flex;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.step:last-of-type { border-bottom: none; }
+
+.step-marker {
+  flex: 0 0 auto;
+  width: 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 用 CSS 画一根迷你K线：上下影线（::before/::after）+ 实体（自身背景） */
+.candle {
+  position: relative;
+  width: 10px;
+  height: 26px;
+  border-radius: 2px;
+  background: var(--text-muted);
+}
+.candle::before,
+.candle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: inherit;
+}
+.candle::before { top: -6px; height: 6px; }
+.candle::after { bottom: -6px; height: 6px; }
+
+.candle-up { background: var(--long); }     /* 绿色实体：偏"做多/上涨"相关步骤 */
+.candle-down { background: var(--short); }  /* 红色实体：偏"止损/做空案例"相关步骤 */
+.candle-neutral { background: var(--text-muted); } /* 灰色实体：中性操作步骤 */
+
+.step-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.step-body { flex: 1 1 auto; min-width: 0; }
+.step-body h2 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 700;
+}
+.step-body p { margin: 0 0 8px; font-size: 13.5px; line-height: 1.7; color: var(--text); }
+.step-body ul { margin: 0; padding-left: 18px; }
+.step-body li {
+  font-size: 13.5px;
+  line-height: 1.7;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.step-body li:last-child { margin-bottom: 0; }
+.step-body b { color: var(--accent); font-weight: 700; }
+
+/* 案例拆解区块 */
+.case-study {
+  margin-top: 8px;
+  padding: 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.case-title { margin: 0 0 8px; font-size: 15px; font-weight: 700; }
+.case-study p { font-size: 13.5px; line-height: 1.7; margin: 0 0 10px; }
+.case-study b { color: var(--accent); }
+.case-hint { color: var(--text-muted); font-size: 12.5px; }
+
+.case-table {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.case-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 10px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+}
+.case-row:last-child { border-bottom: none; }
+.case-row-head {
+  background: var(--panel-2);
+  font-family: var(--font-ui);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.case-row-danger { color: var(--danger-text); font-weight: 700; }
+
+.tag {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+.tag-short { background: rgba(246,70,93,0.15); color: var(--short); }
+.tag-long { background: rgba(14,203,129,0.15); color: var(--long); }
+
+/* ==========================================================================
+   表单通用样式（计算器 / 复盘记事共用）
+   ========================================================================== */
+.field {
+  display: block;
+  margin-bottom: 12px;
+}
+.field-label {
+  display: block;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+input[type="number"],
+input[type="text"],
+textarea {
+  width: 100%;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 12px;
+  font-size: 15px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  outline: none;
+}
+input[type="text"] { font-family: var(--font-ui); }
+textarea { font-family: var(--font-ui); resize: vertical; }
+input:focus, textarea:focus {
+  border-color: var(--accent);
+}
+input::placeholder, textarea::placeholder { color: #566072; }
+
+.btn-primary {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #1A1300;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+}
+.btn-primary:active { opacity: 0.85; }
+
+/* 做多/做空 分段选择器 */
+.segmented {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.segment-btn {
+  flex: 1;
+  padding: 11px 0;
+  background: var(--panel-2);
+  border: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.segment-btn.segment-long.active { background: rgba(14,203,129,0.18); color: var(--long); }
+.segment-btn.segment-short.active { background: rgba(246,70,93,0.18); color: var(--short); }
+
+/* ==========================================================================
+   计算器：结果面板
+   ========================================================================== */
+.result-panel {
+  margin-top: 16px;
+  padding: 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.result-row:last-of-type { border-bottom: none; }
+.result-label { font-size: 12.5px; color: var(--text-muted); }
+.result-value {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+}
+.result-row-danger .result-value { color: var(--danger-text); }
+
+/* 距爆仓价距离的可视化条：绿→红 渐变，指示当前风险位置 */
+.liq-gauge {
+  margin-top: 10px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--long), var(--accent) 60%, var(--short));
+  position: relative;
+}
+.liq-gauge-bar {
+  position: absolute;
+  top: -4px;
+  width: 3px;
+  height: 16px;
+  background: #FFFFFF;
+  border-radius: 2px;
+  left: 0%;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.4);
+}
+.liq-gauge-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+/* ==========================================================================
+   复盘记事本
+   ========================================================================== */
+.journal-hint {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0 0 14px;
+}
+.journal-form { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+
+.journal-list { display: flex; flex-direction: column; gap: 10px; }
+.journal-entry {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+.journal-entry-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.journal-entry-title {
+  font-size: 13.5px;
+  font-weight: 700;
+}
+.journal-entry-date {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+.journal-entry-field { margin-bottom: 6px; }
+.journal-entry-field:last-child { margin-bottom: 0; }
+.journal-entry-field-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.journal-entry-field-text {
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.journal-entry-actions { margin-top: 10px; text-align: right; }
+.btn-delete {
+  background: transparent;
+  border: 1px solid var(--danger-border);
+  color: var(--danger-text);
+  border-radius: 8px;
+  font-size: 12px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.journal-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  padding: 24px 0;
+}
+
+/* 小屏适配微调 */
+@media (max-width: 360px) {
+  .app-header h1 { font-size: 16px; }
+  .step-body h2 { font-size: 14px; }
+}
